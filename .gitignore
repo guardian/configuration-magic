@@ -3,3 +3,4 @@ logs
 dist
 .idea*
 .DS_Store
+dynamodb-local
