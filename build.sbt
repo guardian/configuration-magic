@@ -4,8 +4,6 @@ organization := "com.gu"
 
 name := "configuration-magic"
 
-version := "1.0"
-
 scalaVersion := "2.11.7"
 
 libraryDependencies ++= Seq(
