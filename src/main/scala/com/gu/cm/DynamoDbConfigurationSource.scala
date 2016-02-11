@@ -3,22 +3,25 @@ package com.gu.cm
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain
 import com.amazonaws.regions.Region
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
-import com.amazonaws.services.dynamodbv2.document.{TableKeysAndAttributes, PrimaryKey, DynamoDB}
+import com.amazonaws.services.dynamodbv2.document.{PrimaryKey, DynamoDB}
 import com.typesafe.config.{ConfigFactory, Config}
-import scala.collection.JavaConverters._
+import scala.util.{Failure, Success, Try}
 
 class DynamoDbConfigurationSource(dynamoDb: DynamoDB, identity: Identity, prefix: String) extends ConfigurationSource {
+
+  val tableName = s"$prefix${identity.stack}"
+
   override def load: Config = {
-    val tableName = s"$prefix${identity.stack}"
-    val primaryKey = new PrimaryKey("App", identity.app, "Stage", identity.stage)
+    val config = for {
+      table <- Try(dynamoDb.getTable(tableName))
+      item <- Try(table.getItem(new PrimaryKey("App", identity.app, "Stage", identity.stage)))
+    } yield {
+      ConfigFactory.parseMap(item.getMap("Config"), s"Dynamo DB table $tableName [App=${identity.app}, Stage=${identity.stage}]")
+    }
 
-    val tableKeysAndAttributes = new TableKeysAndAttributes(tableName).withPrimaryKeys(primaryKey)
-
-    val result = dynamoDb.batchGetItem(tableKeysAndAttributes)
-    val items = result.getTableItems.asScala.get(tableName).toList.flatMap(_.asScala)
-    items match {
-      case Nil => ConfigFactory.empty(s"no DynamoDB config for $tableName [App=${identity.app}, Stage=${identity.stage}]")
-      case item :: _ => ConfigFactory.parseMap(item.getMap("Config"), s"Dynamo DB table $tableName [App=${identity.app}, Stage=${identity.stage}]")
+    config match {
+      case Success(theConfig) => theConfig
+      case Failure(theFailure) => ConfigFactory.empty(s"no DynamoDB config for $tableName [App=${identity.app}, Stage=${identity.stage}]")
     }
   }
 }

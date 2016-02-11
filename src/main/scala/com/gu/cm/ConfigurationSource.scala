@@ -9,7 +9,7 @@ trait ConfigurationSource {
 }
 
 object EmptyConfigurationSource extends ConfigurationSource {
-  def load: Config = ConfigFactory.empty()
+  val load: Config = ConfigFactory.empty()
 }
 
 class FileConfigurationSource(file: File) extends ConfigurationSource {

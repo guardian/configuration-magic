@@ -4,10 +4,18 @@ import com.amazonaws.regions.{Region, Regions}
 import com.typesafe.config._
 import Mode._
 
-class Configuration(sources: List[ConfigurationSource]) extends ConfigurationSource {
+class Configuration(
+  sources: List[ConfigurationSource],
+  loggingFunction: String => Unit = _ => ()) extends ConfigurationSource {
   def load: Config = {
-    sources.map(_.load).foldLeft(ConfigFactory.empty()) {
-      case (agg, source) => agg.withFallback(source)
+    sources.foldLeft(ConfigFactory.empty()) { case (agg, source) =>
+      val config = source.load
+      if (config.isEmpty) {
+        loggingFunction(s"[Configuration-Magic] Nothing loaded from source: ${config.origin().description()}")
+      } else {
+        loggingFunction(s"[Configuration-Magic] loaded from: ${config.origin().description()}")
+      }
+      agg.withFallback(config)
     }
   }
 }
@@ -34,7 +42,8 @@ object Configuration {
   def apply(
     mode: Mode,
     identity: Identity,
-    region: Region = Region.getRegion(Regions.EU_WEST_1)): Configuration = {
-    new Configuration(buildSources(mode, identity, region))
+    region: Region = Region.getRegion(Regions.EU_WEST_1),
+    loggingFunction: String => Unit = _ => ()): Configuration = {
+    new Configuration(buildSources(mode, identity, region), loggingFunction)
   }
 }
