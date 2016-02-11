@@ -1,5 +1,7 @@
 import com.teambytes.sbt.dynamodb.DynamoDBLocal
 
+organization := "com.gu"
+
 name := "configuration-magic"
 
 version := "1.0"
