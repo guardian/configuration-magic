@@ -1,16 +1,11 @@
 package com.gu.cm
 
-import play.api.{Mode => PlayMode, Configuration => PlayConfigruation}
+import play.api.{Configuration => PlayConfigruation}
 import play.api.ApplicationLoader.Context
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceApplicationLoader}
+import PlayImplicits._
 
 class ConfigurationGuiceApplicationLoader extends GuiceApplicationLoader() {
-
-  implicit def playModeToCmMode(mode: PlayMode.Mode): Mode = mode match {
-    case PlayMode.Dev => Mode.Dev
-    case PlayMode.Test => Mode.Test
-    case PlayMode.Prod => Mode.Prod
-  }
 
   def identity(context: Context): Identity = Identity(
     stack = context.initialConfiguration.getString("application.stack").getOrElse("defaultStack"),
