@@ -33,8 +33,8 @@ object Configuration {
     lazy val dynamo = DynamoDbConfigurationSource(region, identity)
 
     mode match {
-      case Dev => List(userHome, devClassPath)
-      case Test => List(testClassPath)
+      case Dev => List(userHome, devClassPath, classPath)
+      case Test => List(testClassPath, classPath)
       case Prod => List(dynamo, classPath)
     }
   }
