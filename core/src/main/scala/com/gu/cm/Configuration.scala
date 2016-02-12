@@ -6,14 +6,14 @@ import Mode._
 
 class Configuration(
   sources: List[ConfigurationSource],
-  loggingFunction: String => Unit = _ => ()) extends ConfigurationSource {
+  logger: Logger = SysOutLogger) extends ConfigurationSource {
   def load: Config = {
     sources.foldLeft(ConfigFactory.empty()) { case (agg, source) =>
       val config = source.load
       if (config.isEmpty) {
-        loggingFunction(s"[Configuration-Magic] Nothing loaded from source: ${config.origin().description()}")
+        logger.warn(s"[Configuration-Magic] Nothing loaded from source: ${config.origin().description()}")
       } else {
-        loggingFunction(s"[Configuration-Magic] loaded from: ${config.origin().description()}")
+        logger.info(s"[Configuration-Magic] loaded from: ${config.origin().description()}")
       }
       agg.withFallback(config)
     }
@@ -43,7 +43,7 @@ object Configuration {
     mode: Mode,
     identity: Identity,
     region: Region = Region.getRegion(Regions.EU_WEST_1),
-    loggingFunction: String => Unit = _ => ()): Configuration = {
-    new Configuration(buildSources(mode, identity, region), loggingFunction)
+    logger: Logger = SysOutLogger): Configuration = {
+    new Configuration(buildSources(mode, identity, region), logger)
   }
 }
