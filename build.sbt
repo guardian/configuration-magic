@@ -1,15 +1,13 @@
 import com.teambytes.sbt.dynamodb.DynamoDBLocal
 import sbt.Keys._
 
-organization := "com.gu"
-
-scalaVersion := "2.11.7"
-
 name := "configuration-magic"
 
 lazy val core = project
   .settings(LocalDynamoDb.settings)
   .settings(
+    scalaVersion := "2.11.7",
+    organization := "com.gu",
     name := "configuration-magic-core",
     libraryDependencies ++= Seq(
       "com.typesafe" % "config" % "1.3.0",
@@ -24,7 +22,9 @@ lazy val core = project
 lazy val play24 = project
   .dependsOn(core)
   .settings(
-  name := "configuration-magic-play2.4",
-  libraryDependencies ++= Seq(
-    "com.typesafe.play" % "play_2.11" % "2.4.6"
+    scalaVersion := "2.11.7",
+    organization := "com.gu",
+    name := "configuration-magic-play2.4",
+    libraryDependencies ++= Seq(
+    "com.typesafe.play" %% "play" % "2.4.6"
   ))
