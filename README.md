@@ -5,7 +5,8 @@ Configuration magic is a thin wrapper around Typesafe's configuration library. I
 The librairy is currently split in two, configuration-magic-core and configuration-magic-play2-4.
 
 ## Concept
-The idea is to be able to compose an application configuration from one or more sources. The sources can be files, a classpath resource or a dynamodb.
+### Sources
+The idea is to be able to compose an application configuration from one or more sources. The sources can be files, a classpath resource or a dynamodb table.
 When requiring a property, the look-up order will be the same as the configuration sources.
 
 The look-up sources depends on the current mode of the application. Three modes are accepted, and provide the following definition:
@@ -20,9 +21,10 @@ mode match {
 
 This list of sources can be overridden if the default behaviour doesn't match the needs of your application.
 
+### Application Identity
 The library needs to identify the application currently running.
 
-Presently, this is done by requiring a case class named "Identity"
+Presently, this is done by requiring a case class named "Identity".
 That case class will contain the necessary information to locate the configuration.
 Identity is defined like that:
 
@@ -88,4 +90,5 @@ class YourApplicationLoader extends ConfigurationGuiceApplicationLoader {
 
 ## Logging
 By default the library will log to sysout, but if desired you can implement com.gu.Logger and pass that implementation when calling ````com.gu.cm.Configuration.apply````
-When using the play2.4 module, the default behaviour is to use PLay's default logger.
+
+Note that when using the play2.4 module, the default behaviour is to use Play's default logger.
