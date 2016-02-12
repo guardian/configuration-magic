@@ -22,7 +22,7 @@ class Configuration(
 
 object Configuration {
   def buildSources(
-    mode: Mode,
+    mode: Mode = Mode.Prod,
     identity: Identity,
     region: Region = Region.getRegion(Regions.EU_WEST_1)): List[ConfigurationSource] = {
 
@@ -40,7 +40,7 @@ object Configuration {
   }
 
   def apply(
-    mode: Mode,
+    mode: Mode = Mode.Prod,
     identity: Identity,
     region: Region = Region.getRegion(Regions.EU_WEST_1),
     logger: Logger = SysOutLogger): Configuration = {
