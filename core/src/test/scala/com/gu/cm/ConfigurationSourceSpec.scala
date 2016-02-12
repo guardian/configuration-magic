@@ -14,7 +14,7 @@ class ConfigurationSourceSpec extends Specification {
 
   "a file configuration source" should {
     "load configuration from a file" in {
-      val file = new File("src/test/resources/sample")
+      val file = new File("core/src/test/resources/sample")
       val conf = FileConfigurationSource(file).load
       conf.isEmpty should beFalse
       conf.getInt("foo.a") shouldEqual 42

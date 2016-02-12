@@ -1,21 +1,30 @@
 import com.teambytes.sbt.dynamodb.DynamoDBLocal
-
-organization := "com.gu"
+import sbt.Keys._
 
 name := "configuration-magic"
 
-scalaVersion := "2.11.7"
+lazy val core = project
+  .settings(LocalDynamoDb.settings)
+  .settings(
+    scalaVersion := "2.11.7",
+    organization := "com.gu",
+    name := "configuration-magic-core",
+    libraryDependencies ++= Seq(
+      "com.typesafe" % "config" % "1.3.0",
+      "org.specs2" %% "specs2-core" % "3.7" % "test",
+      "com.amazonaws" % "aws-java-sdk-dynamodb" % "1.10.51"
+    ),
+    test in Test <<= (test in Test).dependsOn(DynamoDBLocal.Keys.startDynamoDBLocal),
+    testOnly in Test <<= (testOnly in Test).dependsOn(DynamoDBLocal.Keys.startDynamoDBLocal),
+    testQuick in Test <<= (testQuick in Test).dependsOn(DynamoDBLocal.Keys.startDynamoDBLocal)
+  )
 
-libraryDependencies ++= Seq(
-  "com.typesafe" % "config" % "1.3.0",
-  "org.specs2" %% "specs2-core" % "3.7" % "test",
-  "com.amazonaws" % "aws-java-sdk-dynamodb" % "1.10.51"
-)
-
-LocalDynamoDb.settings
-
-test in Test <<= (test in Test).dependsOn(DynamoDBLocal.Keys.startDynamoDBLocal)
-
-testOnly in Test <<= (testOnly in Test).dependsOn(DynamoDBLocal.Keys.startDynamoDBLocal)
-
-testQuick in Test <<= (testQuick in Test).dependsOn(DynamoDBLocal.Keys.startDynamoDBLocal)
+lazy val play24 = project
+  .dependsOn(core)
+  .settings(
+    scalaVersion := "2.11.7",
+    organization := "com.gu",
+    name := "configuration-magic-play2.4",
+    libraryDependencies ++= Seq(
+    "com.typesafe.play" %% "play" % "2.4.6"
+  ))
