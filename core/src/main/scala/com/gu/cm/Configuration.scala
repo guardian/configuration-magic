@@ -11,9 +11,9 @@ class Configuration(
     sources.foldLeft(ConfigFactory.empty()) { case (agg, source) =>
       val config = source.load
       if (config.isEmpty) {
-        logger.warn(s"[Configuration-Magic] Nothing loaded from source: ${config.origin().description()}")
+        logger.warn(s"Nothing loaded from source: ${config.origin().description()}")
       } else {
-        logger.info(s"[Configuration-Magic] loaded from: ${config.origin().description()}")
+        logger.info(s"Loaded from: ${config.origin().description()}")
       }
       agg.withFallback(config)
     }

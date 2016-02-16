@@ -19,7 +19,7 @@ class ConfigurationGuiceApplicationLoader extends GuiceApplicationLoader() {
       identity = identity(context),
       logger = PlayDefaultLogger
     ).load
-    PlayDefaultLogger.info(s"[Configuration-Magic] Configuration loaded from ${config.origin().description()}")
+    PlayDefaultLogger.info(s"Configuration loaded from ${config.origin().description()}")
     super.builder(context).loadConfig(context.initialConfiguration ++ PlayConfigruation(config))
   }
 }
