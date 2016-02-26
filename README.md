@@ -21,12 +21,13 @@ mode match {
 
 This list of sources can be overridden if the default behaviour doesn't match the needs of your application.
 
-### Application Identity
-The library needs to identify the application currently running.
+### Autodetection of the application identity
+configuration-magic tries to identify where the application is running by applying the following rules:
 
-Presently, this is done by requiring an object of type ````Identity````.
-````Identity```` is a trait that describes the necessary information to locate the configuration.
-It is defined as:
+* If the application is running in TEST or DEV mode, it will assume the application is running locally or on a test machine, and won't attempt to read the configuration from dynamoDB
+* If the application is running in PROD mode, it will assume the application is running on an EC2 instance, and will use the EC2 client to list the tags of that instance to create the application Identity. Three tags are required: "App", "Stage" and "Stack"
+
+````Identity```` is defined as:
 
 ````scala
 sealed trait Identity {
