@@ -7,16 +7,12 @@ import PlayImplicits._
 
 class ConfigurationGuiceApplicationLoader extends GuiceApplicationLoader() {
 
-  def identity(context: Context): Identity = Identity(
-    stack = context.initialConfiguration.getString("application.stack").getOrElse("defaultStack"),
-    app = context.initialConfiguration.getString("application.app").getOrElse("defaultApplication"),
-    stage = context.initialConfiguration.getString("application.stage").getOrElse("defaultStage")
-  )
+  def appName(context: Context): String = context.initialConfiguration.getString("play.application.name").getOrElse("")
 
   override protected def builder(context: Context): GuiceApplicationBuilder = {
     val config = Configuration(
+      defaultAppName = appName(context),
       mode = context.environment.mode,
-      identity = identity(context),
       logger = PlayDefaultLogger
     ).load
     PlayDefaultLogger.info(s"Configuration loaded from ${config.origin().description()}")

@@ -40,7 +40,8 @@ lazy val core = project
     libraryDependencies ++= Seq(
       "com.typesafe" % "config" % "1.3.0",
       "org.specs2" %% "specs2-core" % "3.7" % "test",
-      "com.amazonaws" % "aws-java-sdk-dynamodb" % "1.10.51"
+      "com.amazonaws" % "aws-java-sdk-dynamodb" % "1.10.51",
+      "com.amazonaws" % "aws-java-sdk-ec2" % "1.10.52"
     ),
     test in Test <<= (test in Test).dependsOn(DynamoDBLocal.Keys.startDynamoDBLocal),
     testOnly in Test <<= (testOnly in Test).dependsOn(DynamoDBLocal.Keys.startDynamoDBLocal),

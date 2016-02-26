@@ -1,7 +1,7 @@
 package com.gu.cm
 
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain
-import com.amazonaws.regions.Region
+import com.amazonaws.regions.RegionUtils
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
 import com.amazonaws.services.dynamodbv2.document.{PrimaryKey, DynamoDB}
 import com.typesafe.config.{ConfigFactory, Config}
@@ -27,10 +27,10 @@ class DynamoDbConfigurationSource(dynamoDb: DynamoDB, identity: Identity, prefix
 }
 
 object DynamoDbConfigurationSource {
-  def apply(region: Region, identity: Identity, prefix: String = "config-"): DynamoDbConfigurationSource = {
+  def apply(identity: Identity, prefix: String = "config-"): DynamoDbConfigurationSource = {
     val dynamoDb = {
       val client = new AmazonDynamoDBClient(new DefaultAWSCredentialsProviderChain())
-      client.setRegion(region)
+      client.setRegion(RegionUtils.getRegion(identity.region))
       new DynamoDB(client)
     }
     new DynamoDbConfigurationSource(dynamoDb, identity, prefix)
