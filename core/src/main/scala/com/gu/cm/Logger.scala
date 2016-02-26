@@ -10,13 +10,13 @@ trait Logger {
 }
 
 object SysOutLogger extends Logger {
-  def info(message: => String): Unit = println(s"[INFO] $message")
-  def warn(message: => String): Unit = println(s"[WARN] $message")
-  def error(message: => String): Unit = println(s"[ERROR] $message")
+  def info(message: => String): Unit = println(s"[INFO] [Configuration-magic] $message")
+  def warn(message: => String): Unit = println(s"[WARN] [Configuration-magic] $message")
+  def error(message: => String): Unit = println(s"[ERROR] [Configuration-magic] $message")
   def error(message: => String, exception: => Throwable): Unit = {
     val sw = new StringWriter()
     val pw = new PrintWriter(sw)
     exception.printStackTrace(pw)
-    println(s"[ERROR] $message caused by: ${sw.toString}")
+    println(s"[ERROR] [Configuration-magic] $message caused by: ${sw.toString}")
   }
 }

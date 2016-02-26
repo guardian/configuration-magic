@@ -21,16 +21,24 @@ mode match {
 
 This list of sources can be overridden if the default behaviour doesn't match the needs of your application.
 
-### Application Identity
-The library needs to identify the application currently running.
+### Autodetection of the application identity
+configuration-magic tries to identify where the application is running by applying the following rules:
 
-Presently, this is done by requiring a case class named "Identity".
-That case class will contain the necessary information to locate the configuration.
-Identity is defined like that:
+* If the application is running in TEST or DEV mode, it will assume the application is running locally or on a test machine, and won't attempt to read the configuration from dynamoDB
+* If the application is running in PROD mode, it will assume the application is running on an EC2 instance, and will use the EC2 client to list the tags of that instance to create the application Identity. Three tags are required: "App", "Stage" and "Stack"
+
+````Identity```` is defined as:
 
 ````scala
-case class Identity(stack: String, app: String, stage: String)
+sealed trait Identity {
+  def stack: String
+  def app: String
+  def stage: String
+  def region: String
+}
 ````
+
+And is implemented by ````AwsApplication```` and ````LocalApplication````
 
 ## configuration-magic-core
 
@@ -41,22 +49,21 @@ The default name of the table will be: ````config-${identity.stack}````
 
 The partition key needs to be named "App" (type String), the sort key needs to be named "Stage" (type String) and the configuration "Config" needs a Map.
 
-Once created, insert at least one item matching your application identity to expect a configuration to be loaded.
+Once the table is created, insert at least one item matching your application identity to expect a configuration to be loaded.
 
 ### Loading the configuration
 
 In your build.sbt
 
 ````scala
-libraryDependencies += "com.gu" %% "configuration-magic-core" %  "1.0.0"
+libraryDependencies += "com.gu" %% "configuration-magic-core" %  "1.1.0"
 ````
 
 Then to load the configuration
 
 ````scala
 import com.gu.cm.Configuration
-val identity = Identity(...)
-val config = Configuration(identity = identity).load
+val config = Configuration("myApp", Mode.Prod).load
 ````
 
 ## configuration-magic-play2-4
@@ -67,26 +74,20 @@ build.sbt
 
 ````scala
 libraryDependencies ++= Seq(
-  "com.gu" %% "configuration-magic-core" %  "1.0.0",
-  "com.gu" %% "configuration-magic-play2-4" %  "1.0.0"
+  "com.gu" %% "configuration-magic-core" %  "1.1.0",
+  "com.gu" %% "configuration-magic-play2-4" %  "1.1.0"
 )
 ````
 
 application.conf
 
 ````
-play.application.loader="com.example.YourApplicationLoader"
+play.application.name="myApp"
+play.application.loader="com.gu.cm.ConfigurationGuiceApplicationLoader"
 ````
 
-YourApplicationLoader.scala
-
-````scala
-import com.gu.cm.{ConfigurationGuiceApplicationLoader, Identity}
-import play.api.ApplicationLoader.Context
-class YourApplicationLoader extends ConfigurationGuiceApplicationLoader {
-  override def identity(context: Context): Identity = Identity(...)
-}
-````
+You can also modify the default behaviour by creating your own loader that extends ````ConfigurationGuiceApplicationLoader```` or that manually calls the core configruation.
+See ConfigurationGuiceApplicationLoader.scala for a reference implementation.
 
 ## Logging
 By default the library will log to sysout, but if desired you can implement com.gu.Logger and pass that implementation when calling ````com.gu.cm.Configuration.apply````

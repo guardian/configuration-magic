@@ -2,10 +2,30 @@ package com.gu.cm
 
 import java.io.File
 
+import com.gu.cm.Mode._
 import com.typesafe.config._
 
 trait ConfigurationSource {
   def load: Config
+}
+
+object ConfigurationSource {
+  def defaultSources(
+    mode: Mode,
+    identity: Identity): List[ConfigurationSource] = {
+
+    lazy val userHome = FileConfigurationSource(s"${System.getProperty("user.home")}/.configuration-magic/${identity.app}")
+    lazy val devClassPath = ClassPathConfigurationSource("application-DEV")
+    lazy val testClassPath = ClassPathConfigurationSource("application-TEST")
+    lazy val classPath = ClassPathConfigurationSource("application")
+    lazy val dynamo = DynamoDbConfigurationSource(identity)
+
+    mode match {
+      case Dev => List(userHome, devClassPath, classPath)
+      case Test => List(testClassPath, classPath)
+      case Prod => List(dynamo, classPath)
+    }
+  }
 }
 
 object EmptyConfigurationSource extends ConfigurationSource {

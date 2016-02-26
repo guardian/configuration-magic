@@ -26,10 +26,11 @@ class DynamoDbConfigurationSourceSpec extends Specification {
       new DynamoDB(client)
     }
 
-    val identity = Identity(
+    val identity = AwsApplication(
       stack = "test-stack",
       app = "configuration-magic",
-      stage = "test"
+      stage = "test",
+      region = "eu-west-1"
     )
 
     val dynamoDbConfigurationSource = new DynamoDbConfigurationSource(dynamoDb, identity, "prefix-")
