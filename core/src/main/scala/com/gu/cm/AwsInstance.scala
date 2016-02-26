@@ -30,7 +30,6 @@ class AwsInstanceImpl(logger: Logger) extends AwsInstance {
   lazy val tags: Map[String, String] = {
     val allTags = for {
       theInstanceId <- instanceId
-      theRegion <- region
       theClient <- ec2Client
       tagsResult <- safeAwsOperation(theClient.describeTags(new DescribeTagsRequest().withFilters(
         new Filter("resource-type").withValues("instance"),

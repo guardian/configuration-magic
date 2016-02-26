@@ -45,12 +45,12 @@ class InstanceDescriber(
       app <- awsInstance.tags.get("App")
       stack <- awsInstance.tags.get("Stack")
       stage <- awsInstance.tags.get("Stage")
-      theRegion <- awsInstance.region
+      region <- awsInstance.region
     } yield AwsApplication(
       app = app,
       stack = stack,
       stage = stage,
-      region = theRegion.getName
+      region = region.getName
     )
     identity.getOrElse(throw new RuntimeException("Unable to identify aws instance in production mode. Check if the tags are set correctly"))
   }
