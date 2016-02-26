@@ -56,7 +56,7 @@ Once the table is created, insert at least one item matching your application id
 In your build.sbt
 
 ````scala
-libraryDependencies += "com.gu" %% "configuration-magic-core" %  "1.1.0"
+libraryDependencies += "com.gu" %% "configuration-magic-core" %  "1.1.1"
 ````
 
 Then to load the configuration
@@ -74,8 +74,8 @@ build.sbt
 
 ````scala
 libraryDependencies ++= Seq(
-  "com.gu" %% "configuration-magic-core" %  "1.1.0",
-  "com.gu" %% "configuration-magic-play2-4" %  "1.1.0"
+  "com.gu" %% "configuration-magic-core" %  "1.1.1",
+  "com.gu" %% "configuration-magic-play2-4" %  "1.1.1"
 )
 ````
 
