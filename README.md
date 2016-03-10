@@ -86,7 +86,7 @@ play.application.name="myApp"
 play.application.loader="com.gu.cm.ConfigurationGuiceApplicationLoader"
 ````
 
-You can also modify the default behaviour by creating your own loader that extends ````ConfigurationGuiceApplicationLoader```` or that manually calls the core configruation.
+You can also modify the default behaviour by creating your own loader that extends ````ConfigurationGuiceApplicationLoader```` or that manually calls the core configuration.
 See ConfigurationGuiceApplicationLoader.scala for a reference implementation.
 
 ## Logging

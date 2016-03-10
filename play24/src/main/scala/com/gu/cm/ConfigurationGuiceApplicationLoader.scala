@@ -1,6 +1,6 @@
 package com.gu.cm
 
-import play.api.{Configuration => PlayConfigruation}
+import play.api.{Configuration => PlayConfiguration}
 import play.api.ApplicationLoader.Context
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceApplicationLoader}
 import PlayImplicits._
@@ -17,6 +17,6 @@ class ConfigurationGuiceApplicationLoader extends GuiceApplicationLoader() {
       logger = PlayDefaultLogger
     ).load
     PlayDefaultLogger.info(s"Configuration loaded from ${config.origin().description()}")
-    super.builder(context).loadConfig(context.initialConfiguration ++ PlayConfigruation(config))
+    super.builder(context).loadConfig(context.initialConfiguration ++ PlayConfiguration(config))
   }
 }
