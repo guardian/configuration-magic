@@ -1,7 +1,7 @@
 # configuration-magic
 _Where the magic happens_
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.gu/configuration-magic-core_2.11/badge.svg)]
+![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.gu/configuration-magic-core_2.11/badge.svg)
 
 Configuration magic is a thin wrapper around Typesafe's configuration library. Its main goal is to load the configuration from a dynamodb table.
 The librairy is currently split in two, configuration-magic-core and configuration-magic-play2-4.
