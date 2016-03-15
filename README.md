@@ -68,6 +68,30 @@ import com.gu.cm.Configuration
 val config = Configuration("myApp", Mode.Prod).load
 ````
 
+### Required IAM permissions
+
+configuration-magic uses AWS APIs to:
+* discover information about the running EC2 instance's stack, stage and app name based on its tags
+* download configuration from the DynamoDB table
+
+Thus your EC2 instance profile will need the following permissions:
+
+```
+{
+    "Effect": "Allow",
+    "Action": "ec2:DescribeTags",
+    "Resource": "*"
+}, {
+    "Effect": "Allow",
+    "Action": "dynamodb:ListTables",
+    "Resource": "*"
+}, {
+    "Effect": "Allow",
+    "Action": [ "dynamodb:DescribeTable", "dynamodb:GetItem" ],
+    "Resource": { "Fn::Join": [ "-", [ "arn:aws:dynamodb:*:*:table/config", { "Ref": "Stack" } ] ] }
+}
+```
+
 ## configuration-magic-play2-4
 
 This module aim to simplify the usage of configuration magic for play 2.4.
