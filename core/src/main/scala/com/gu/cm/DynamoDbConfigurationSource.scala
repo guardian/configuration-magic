@@ -21,7 +21,7 @@ class DynamoDbConfigurationSource(dynamoDb: DynamoDB, identity: Identity, prefix
 
     config match {
       case Success(theConfig) => theConfig
-      case Failure(theFailure) => ConfigFactory.empty(s"no DynamoDB config for $tableName [App=${identity.app}, Stage=${identity.stage}]")
+      case Failure(theFailure) => ConfigFactory.empty(s"no DynamoDB config (or failed to load) for $tableName [App=${identity.app}, Stage=${identity.stage}], exception=[$theFailure]")
     }
   }
 }
