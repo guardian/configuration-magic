@@ -1,0 +1,17 @@
+package com.gu.cm
+
+import play.api.{Configuration => PlayConfigruation}
+import play.api.ApplicationLoader.Context
+import PlayImplicits._
+
+object ContextConfigurationLoader {
+  def apply(defaultAppName: String, context: Context): Context = {
+    val config = Configuration(
+      defaultAppName = defaultAppName,
+      mode = context.environment.mode,
+      logger = PlayDefaultLogger
+    ).load
+    PlayDefaultLogger.info(s"Configuration loaded from ${config.origin().description()}")
+    context.copy(initialConfiguration = context.initialConfiguration ++ PlayConfigruation(config))
+  }
+}
