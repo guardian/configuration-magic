@@ -10,7 +10,7 @@ object ContextConfigurationLoader {
       defaultAppName = defaultAppName,
       mode = context.environment.mode,
       logger = PlayDefaultLogger
-    ).load
+    ).load.resolve()
     PlayDefaultLogger.info(s"Configuration loaded from ${config.origin().description()}")
     context.copy(initialConfiguration = context.initialConfiguration ++ PlayConfiguration(config))
   }
