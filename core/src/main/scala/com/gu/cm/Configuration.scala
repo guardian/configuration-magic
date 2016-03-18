@@ -21,6 +21,10 @@ class Configuration(
 object Configuration {
   def apply(defaultAppName: String, mode: Mode = Mode.Prod, logger: Logger = SysOutLogger): Configuration = {
     val identity = Identity.whoAmI(defaultAppName, mode, logger)
+    fromIdentity(identity, mode = mode, logger = logger)
+  }
+
+  def fromIdentity(identity: Identity, mode: Mode = Mode.Prod, logger: Logger = SysOutLogger): Configuration = {
     val configurationSources = ConfigurationSource.defaultSources(mode, identity)
     new Configuration(configurationSources, logger)
   }

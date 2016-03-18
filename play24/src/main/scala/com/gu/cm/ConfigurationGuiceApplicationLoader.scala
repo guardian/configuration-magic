@@ -9,7 +9,7 @@ class ConfigurationGuiceApplicationLoader extends GuiceApplicationLoader() {
     .getOrElse(throw new RuntimeException("Please define a default application name in application.conf with the property play.application.name"))
 
   override protected def builder(context: Context): GuiceApplicationBuilder = {
-    val contextWithConfiguration = ContextConfigurationLoader(appName(context), context)
+    val contextWithConfiguration = ConfigurationLoader.playContext(appName(context), context)
     super.builder(contextWithConfiguration)
   }
 }
