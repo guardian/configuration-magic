@@ -94,15 +94,13 @@ Thus your EC2 instance profile will need the following permissions:
 
 ## configuration-magic-play2-4
 
-This module aim to simplify the usage of configuration magic for play 2.4.
+This module aim to simplify the usage of configuration magic for play 2.4 and above.
+It has been tested with play 2.4 and play 2.5
 
 build.sbt
 
 ````scala
-libraryDependencies ++= Seq(
-  "com.gu" %% "configuration-magic-core" %  "1.1.1",
-  "com.gu" %% "configuration-magic-play2-4" %  "1.1.1"
-)
+libraryDependencies +="com.gu" %% "configuration-magic-play2-4" % "1.1.1"
 ````
 
 application.conf
@@ -116,6 +114,6 @@ You can also modify the default behaviour by creating your own loader that exten
 See ConfigurationGuiceApplicationLoader.scala for a reference implementation.
 
 ## Logging
-By default the library will log to sysout, but if desired you can implement com.gu.Logger and pass that implementation when calling ````com.gu.cm.Configuration.apply````
+By default the library will log to sysout, but if desired you can implement ````com.gu.cm.Logger```` and pass that implementation when calling ````com.gu.cm.Configuration.apply````
 
 Note that when using the play2.4 module, the default behaviour is to use Play's default logger.
