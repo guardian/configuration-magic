@@ -58,7 +58,7 @@ Once the table is created, insert at least one item matching your application id
 In your build.sbt
 
 ````scala
-libraryDependencies += "com.gu" %% "configuration-magic-core" %  "1.1.1"
+libraryDependencies += "com.gu" %% "configuration-magic-core" %  "1.2.0"
 ````
 
 Then to load the configuration
@@ -100,7 +100,7 @@ It has been tested with play 2.4 and play 2.5
 build.sbt
 
 ````scala
-libraryDependencies +="com.gu" %% "configuration-magic-play2-4" % "1.1.1"
+libraryDependencies +="com.gu" %% "configuration-magic-play2-4" % "1.2.0"
 ````
 
 application.conf
