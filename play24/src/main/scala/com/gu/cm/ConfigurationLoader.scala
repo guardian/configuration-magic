@@ -5,7 +5,7 @@ import play.api.ApplicationLoader.Context
 import play.api.Mode.{Mode => PlayMode}
 import PlayImplicits._
 
-object ConfigurationLoader {
+object ConfigurationLoader extends Logging {
   def playContext(defaultAppName: String, context: Context): Context = {
     val config = playConfig(defaultAppName, context.environment.mode)
     context.copy(initialConfiguration = context.initialConfiguration ++ config)
@@ -17,22 +17,20 @@ object ConfigurationLoader {
   }
 
   def playConfig(defaultAppName: String, mode: PlayMode): PlayConfiguration = {
-    val config = Configuration(
+    val config = ConfigurationSource(
       defaultAppName = defaultAppName,
-      mode = mode,
-      logger = PlayDefaultLogger
+      mode = mode
     ).load.resolve()
-    PlayDefaultLogger.info(s"Configuration loaded from ${config.origin().description()}")
+    log.info(s"Configuration loaded from ${config.origin().description()}")
     PlayConfiguration(config)
   }
 
   def playConfig(identity: Identity, mode: PlayMode): PlayConfiguration = {
-    val config = Configuration.fromIdentity(
+    val config = ConfigurationSource.fromIdentity(
       identity = identity,
-      mode = mode,
-      logger = PlayDefaultLogger
+      mode = mode
     ).load.resolve()
-    PlayDefaultLogger.info(s"Configuration loaded from ${config.origin().description()}")
+    log.info(s"Configuration loaded from ${config.origin().description()}")
     PlayConfiguration(config)
   }
 

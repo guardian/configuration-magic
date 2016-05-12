@@ -32,6 +32,8 @@ lazy val sharedSettings = Seq(
   }
 )
 
+lazy val awsVersion = "1.10.52"
+
 lazy val core = project
   .settings(LocalDynamoDb.settings)
   .settings(sharedSettings:_*)
@@ -39,9 +41,10 @@ lazy val core = project
     name := "configuration-magic-core",
     libraryDependencies ++= Seq(
       "com.typesafe" % "config" % "1.3.0",
-      "org.specs2" %% "specs2-core" % "3.7" % "test",
-      "com.amazonaws" % "aws-java-sdk-dynamodb" % "1.10.51",
-      "com.amazonaws" % "aws-java-sdk-ec2" % "1.10.52"
+      "org.slf4j" % "slf4j-api" % "1.7.21",
+      "com.amazonaws" % "aws-java-sdk-dynamodb" % awsVersion,
+      "com.amazonaws" % "aws-java-sdk-ec2" % awsVersion,
+      "org.specs2" %% "specs2-core" % "3.7" % "test"
     ),
     test in Test <<= (test in Test).dependsOn(DynamoDBLocal.Keys.startDynamoDBLocal),
     testOnly in Test <<= (testOnly in Test).dependsOn(DynamoDBLocal.Keys.startDynamoDBLocal),

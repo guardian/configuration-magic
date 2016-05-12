@@ -7,12 +7,33 @@ import com.typesafe.config._
 
 trait ConfigurationSource {
   def load: Config
+  // prepend
+  def +:(source: ConfigurationSource) = {
+    val thisLoad = load
+    new ConfigurationSource {
+      def load: Config = thisLoad.withFallback(source.load)
+    }
+  }
+  // append
+  def :+(source: ConfigurationSource) = {
+    val thisLoad = load
+    new ConfigurationSource {
+      def load: Config = source.load.withFallback(thisLoad)
+    }
+  }
 }
 
 object ConfigurationSource {
-  def defaultSources(
-    mode: Mode,
-    identity: Identity): List[ConfigurationSource] = {
+  def apply(defaultAppName: String, mode: Mode = Mode.Prod): ConfigurationSource = {
+    val identity = Identity.whoAmI(defaultAppName, mode)
+    fromIdentity(identity, mode = mode)
+  }
+
+  def fromIdentity(identity: Identity, mode: Mode = Mode.Prod): ConfigurationSource = {
+    ConfigurationSource.default(mode, identity)
+  }
+
+  def default(mode: Mode, identity: Identity): ConfigurationSource = {
 
     lazy val userHome = FileConfigurationSource(s"${System.getProperty("user.home")}/.configuration-magic/${identity.app}")
     lazy val devClassPath = ClassPathConfigurationSource("application-DEV")
@@ -21,9 +42,9 @@ object ConfigurationSource {
     lazy val dynamo = DynamoDbConfigurationSource(identity)
 
     mode match {
-      case Dev => List(userHome, devClassPath, classPath)
-      case Test => List(testClassPath, classPath)
-      case Prod => List(dynamo, classPath)
+      case Dev => userHome +: devClassPath +: classPath
+      case Test => testClassPath +: classPath
+      case Prod => dynamo +: classPath
     }
   }
 }

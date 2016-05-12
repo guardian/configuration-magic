@@ -13,11 +13,11 @@ trait AwsInstance {
   def region: Option[Region]
 }
 
-class AwsInstanceImpl(logger: Logger) extends AwsInstance {
+class AwsInstanceImpl extends AwsInstance with Logging {
   private def safeAwsOperation[A](operation: => A, errorMessage: => String): Option[A] = Try(operation) match {
     case Success(value) => Some(value)
     case Failure(e) =>
-      logger.error(errorMessage, e)
+      log.error(errorMessage, e)
       None
   }
 
@@ -44,5 +44,5 @@ class AwsInstanceImpl(logger: Logger) extends AwsInstance {
 }
 
 object AwsInstance {
-  def apply(logger: Logger): AwsInstance = new AwsInstanceImpl(logger)
+  def apply: AwsInstance = new AwsInstanceImpl
 }

@@ -28,15 +28,14 @@ case class AwsApplication(
 class InstanceDescriber(
   defaultAppName: String,
   mode: Mode,
-  awsInstance: => AwsInstance,
-  logger: Logger = SysOutLogger) {
+  awsInstance: => AwsInstance) extends Logging {
 
   def whoAmI: Identity = {
     val identity = mode match {
       case Prod => describeAwsInstance
       case Test | Dev => LocalApplication(defaultAppName)
     }
-    logger.info(s"Application identified as $identity")
+    log.info(s"Application identified as $identity")
     identity
   }
 
@@ -57,6 +56,6 @@ class InstanceDescriber(
 }
 
 object Identity {
-  def whoAmI(defaultAppName: String, mode: Mode, logger: Logger = SysOutLogger): Identity =
-    new InstanceDescriber(defaultAppName, mode, AwsInstance(logger), logger).whoAmI
+  def whoAmI(defaultAppName: String, mode: Mode): Identity =
+    new InstanceDescriber(defaultAppName, mode, AwsInstance.apply).whoAmI
 }
