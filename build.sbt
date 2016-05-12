@@ -7,7 +7,7 @@ organization := "com.gu"
 name := "configuration-magic"
 
 lazy val sharedSettings = Seq(
-  scalaVersion := "2.11.7",
+  scalaVersion in ThisBuild := "2.11.7",
   organization := "com.gu",
   pomExtra in Global := {
     <url>https://github.com/guardian/configuration-magic</url>
