@@ -33,24 +33,24 @@ lazy val sharedSettings = Seq(
 )
 
 lazy val core = project
-  .settings(sharedSettings:_*)
+  .settings(sharedSettings: _*)
   .settings(
     name := "configuration-magic-core",
     libraryDependencies ++= Seq(
       "com.typesafe" % "config" % "1.3.0",
       "org.specs2" %% "specs2-core" % "3.7" % "test",
-      "com.amazonaws" % "aws-java-sdk-ec2" % "1.10.52"
+      "com.amazonaws" % "aws-java-sdk-ec2" % "1.11.7"
     )
   )
 
 lazy val dynamodb = project
   .settings(LocalDynamoDb.settings)
   .dependsOn(core)
-  .settings(sharedSettings:_*)
+  .settings(sharedSettings: _*)
   .settings(
     name := "configuration-magic-dynamodb",
     libraryDependencies ++= Seq(
-      "com.amazonaws" % "aws-java-sdk-dynamodb" % "1.10.51",
+      "com.amazonaws" % "aws-java-sdk-dynamodb" % "1.11.7",
       "org.specs2" %% "specs2-core" % "3.7" % "test"
     ),
     test in Test <<= (test in Test).dependsOn(DynamoDBLocal.Keys.startDynamoDBLocal),
@@ -58,9 +58,19 @@ lazy val dynamodb = project
     testQuick in Test <<= (testQuick in Test).dependsOn(DynamoDBLocal.Keys.startDynamoDBLocal)
   )
 
+lazy val s3 = project
+  .dependsOn(core)
+  .settings(sharedSettings: _*)
+  .settings(
+    name := "configuration-magic-s3",
+    libraryDependencies ++= Seq(
+      "com.amazonaws" % "aws-java-sdk-s3" % "1.11.7"
+    )
+  )
+
 lazy val play2 = project
   .dependsOn(core)
-  .settings(sharedSettings:_*)
+  .settings(sharedSettings: _*)
   .settings(
     name := "configuration-magic-play2",
     libraryDependencies ++= Seq(
