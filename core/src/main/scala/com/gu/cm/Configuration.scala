@@ -2,11 +2,16 @@ package com.gu.cm
 
 import com.typesafe.config._
 
-class Configuration(
-  sources: List[ConfigurationSource],
-  logger: Logger = SysOutLogger) extends ConfigurationSource {
+trait Configuration extends ConfigurationSource {
+  def mode: Mode
+  def defaultAppName: String
+  def logger: Logger
+  def identity: Identity
+  def sources: ConfigurationSources
+
   def load: Config = {
-    sources.foldLeft(ConfigFactory.empty()) { case (agg, source) =>
+    val resolvedSources = sources.resolve(mode)
+    resolvedSources.foldLeft(ConfigFactory.empty()) { case (agg, source) =>
       val config = source.load
       if (config.isEmpty) {
         logger.warn(s"Nothing loaded from source: ${config.origin().description()}")
@@ -18,14 +23,17 @@ class Configuration(
   }
 }
 
-object Configuration {
-  def apply(defaultAppName: String, mode: Mode = Mode.Prod, logger: Logger = SysOutLogger): Configuration = {
-    val identity = Identity.whoAmI(defaultAppName, mode, logger)
-    fromIdentity(identity, mode = mode, logger = logger)
-  }
+class DefaultConfiguration(
+  override val defaultAppName: String,
+  override val mode: Mode
+) extends Configuration {
+  override lazy val logger: Logger = SysOutLogger
+  override lazy val identity: Identity = Identity.whoAmI(defaultAppName, mode, logger)
+  def sources: ConfigurationSources = new DefaultConfigurationSources(identity)
+}
 
-  def fromIdentity(identity: Identity, mode: Mode = Mode.Prod, logger: Logger = SysOutLogger): Configuration = {
-    val configurationSources = ConfigurationSource.defaultSources(mode, identity)
-    new Configuration(configurationSources, logger)
+object Configuration {
+  def apply(defaultAppName: String, mode: Mode): Configuration = {
+    new DefaultConfiguration(defaultAppName, mode)
   }
 }

@@ -9,22 +9,20 @@ trait ConfigurationSource {
   def load: Config
 }
 
-object ConfigurationSource {
-  def defaultSources(
-    mode: Mode,
-    identity: Identity): List[ConfigurationSource] = {
+trait ConfigurationSources {
+  def resolve: PartialFunction[Mode, List[ConfigurationSource]]
+}
 
-    lazy val userHome = FileConfigurationSource(s"${System.getProperty("user.home")}/.configuration-magic/${identity.app}")
-    lazy val devClassPath = ClassPathConfigurationSource("application-DEV")
-    lazy val testClassPath = ClassPathConfigurationSource("application-TEST")
-    lazy val classPath = ClassPathConfigurationSource("application")
-    lazy val dynamo = DynamoDbConfigurationSource(identity)
+class DefaultConfigurationSources(identity: Identity) extends ConfigurationSources {
+  lazy val userHome = FileConfigurationSource(s"${System.getProperty("user.home")}/.configuration-magic/${identity.app}")
+  lazy val devClassPath = ClassPathConfigurationSource("application-DEV")
+  lazy val testClassPath = ClassPathConfigurationSource("application-TEST")
+  lazy val classPath = ClassPathConfigurationSource("application")
 
-    mode match {
-      case Dev => List(userHome, devClassPath, classPath)
-      case Test => List(testClassPath, classPath)
-      case Prod => List(dynamo, classPath)
-    }
+  def resolve: PartialFunction[Mode, List[ConfigurationSource]] = {
+    case Dev => List(userHome, devClassPath, classPath)
+    case Test => List(testClassPath, classPath)
+    case Prod => List(classPath)
   }
 }
 
