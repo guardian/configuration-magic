@@ -3,12 +3,17 @@ _Where the magic happens_
 
 ![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.gu/configuration-magic-core_2.11/badge.svg)
 
-Configuration magic is a thin wrapper around Typesafe's configuration library. Its main goal is to load the configuration from a dynamodb table.
-The librairy is currently split in two, configuration-magic-core and configuration-magic-play2-4.
+Configuration magic is a thin wrapper around Typesafe's configuration library. Its main goal is to load the configuration from extrenal sources, mainly a dynamodb table or an s3 bucket.
+The library is currently split in different modules:
+
+* configuration-magic-core
+* configuration-magic-dynamodb
+* configuration-magic-s3
+* configuration-magic-play2
 
 ## Concept
 ### Sources
-The idea is to be able to compose an application configuration from one or more sources. The sources can be files, a classpath resource or a dynamodb table.
+The idea is to be able to compose an application configuration from one or more sources. The sources can be files, a classpath resource, a dynamodb table, an s3 bucket or any other source you can think of.
 When requiring a property, the look-up order will be the same as the configuration sources.
 
 The look-up sources depends on the current mode of the application. Three modes are accepted, and provide the following definition:
@@ -17,7 +22,7 @@ The look-up sources depends on the current mode of the application. Three modes 
 mode match {
   case Dev => List(userHome, devClassPath, classPath)
   case Test => List(testClassPath, classPath)
-  case Prod => List(dynamo, classPath)
+  case Prod => List(classPath)
 }
 ````
 
@@ -44,21 +49,26 @@ And is implemented by ````AwsApplication```` and ````LocalApplication````
 
 ## configuration-magic-core
 
-### Defining the DynamoDB Table
-This module will provide you with a way to load your configuration from a DynamoDB Table.
+### Required IAM permissions
 
-The default name of the table will be: ````config-${identity.stack}````
+configuration-magic-core uses AWS APIs to discover information about the running EC2 instance's stack, stage and app name based on its tags.
 
-The partition key needs to be named "App" (type String), the sort key needs to be named "Stage" (type String) and the configuration "Config" needs a Map.
+Thus your EC2 instance profile will need the following permissions:
 
-Once the table is created, insert at least one item matching your application identity to expect a configuration to be loaded.
+```json
+{
+    "Effect": "Allow",
+    "Action": "ec2:DescribeTags",
+    "Resource": "*"
+}
+```
 
 ### Loading the configuration
 
 In your build.sbt
 
 ````scala
-libraryDependencies += "com.gu" %% "configuration-magic-core" %  "1.2.0"
+libraryDependencies += "com.gu" %% "configuration-magic-core" %  "2.0.0"
 ````
 
 Then to load the configuration
@@ -68,20 +78,34 @@ import com.gu.cm.Configuration
 val config = Configuration("myApp", Mode.Prod).load
 ````
 
+## configuration-magic-dynamodb
+
+In your build.sbt
+
+````scala
+libraryDependencies ++= Seq(
+  "com.gu" %% "configuration-magic-core" %  "2.0.0",
+  "com.gu" %% "configuration-magic-dynamodb" %  "2.0.0"
+)
+````
+
+### Defining the DynamoDB Table
+This module is able to load your configuration from a DynamoDB Table.
+
+The default name of the table will be: ````config-${identity.stack}````
+
+The partition key needs to be named "App" (type String), the sort key needs to be named "Stage" (type String) and the configuration "Config" needs a Map.
+
+Once the table is created, insert at least one item matching your application identity to expect a configuration to be loaded.
+
 ### Required IAM permissions
 
-configuration-magic uses AWS APIs to:
-* discover information about the running EC2 instance's stack, stage and app name based on its tags
-* download configuration from the DynamoDB table
+configuration-magic uses AWS APIs to download configuration from the DynamoDB table.
 
 Thus your EC2 instance profile will need the following permissions:
 
-```
+```json
 {
-    "Effect": "Allow",
-    "Action": "ec2:DescribeTags",
-    "Resource": "*"
-}, {
     "Effect": "Allow",
     "Action": "dynamodb:ListTables",
     "Resource": "*"
@@ -92,7 +116,12 @@ Thus your EC2 instance profile will need the following permissions:
 }
 ```
 
-## configuration-magic-play2-4
+## configuration-magic-s3
+This module is able to load your configuration from an s3 bucket.
+The default path will be:
+```s3://your-bucket/<stack>/<stage>/<app>.conf```
+
+## configuration-magic-play2
 
 This module aim to simplify the usage of configuration magic for play 2.4 and above.
 It has been tested with play 2.4 and play 2.5
@@ -105,7 +134,7 @@ libraryDependencies +="com.gu" %% "configuration-magic-play2-4" % "1.2.0"
 
 application.conf
 
-````
+````hocon
 play.application.name="myApp"
 play.application.loader="com.gu.cm.ConfigurationGuiceApplicationLoader"
 ````
