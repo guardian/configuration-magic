@@ -30,12 +30,12 @@ class S3ConfigurationSource(s3: AmazonS3Client, identity: Identity, bucket: Stri
 
 object S3ConfigurationSource {
   def apply(identity: Identity, bucket: String, credentials: AWSCredentialsProvider = new DefaultAWSCredentialsProviderChain()): S3ConfigurationSource = {
-    val dynamoDb = {
+    val s3 = {
       val client = new AmazonS3Client(credentials)
       client.setRegion(RegionUtils.getRegion(identity.region))
       client.setEndpoint(RegionUtils.getRegion(identity.region).getServiceEndpoint(S3))
       client
     }
-    new S3ConfigurationSource(dynamoDb, identity, bucket)
+    new S3ConfigurationSource(s3, identity, bucket)
   }
 }
