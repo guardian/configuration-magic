@@ -12,7 +12,7 @@ import scala.util.{Failure, Success, Try}
 class S3ConfigurationSource(s3: AmazonS3Client, identity: Identity, bucket: String, version: Option[Int]) extends ConfigurationSource {
 
   override def load: Config = {
-    val fileVersion = ".v" + version.getOrElse("")
+    val fileVersion = version.map(".v" + _).getOrElse("")
     val configPath = s"config/${identity.region}-${identity.stack}$fileVersion.conf"
     val request = new GetObjectRequest(bucket, configPath)
     val config = for {
