@@ -32,6 +32,8 @@ lazy val sharedSettings = Seq(
   }
 )
 
+val AwsSdkVersion = "1.11.35"
+
 lazy val core = project
   .settings(LocalDynamoDb.settings)
   .settings(sharedSettings:_*)
@@ -40,8 +42,8 @@ lazy val core = project
     libraryDependencies ++= Seq(
       "com.typesafe" % "config" % "1.3.0",
       "org.specs2" %% "specs2-core" % "3.7" % "test",
-      "com.amazonaws" % "aws-java-sdk-dynamodb" % "1.10.51",
-      "com.amazonaws" % "aws-java-sdk-ec2" % "1.10.52"
+      "com.amazonaws" % "aws-java-sdk-dynamodb" % AwsSdkVersion,
+      "com.amazonaws" % "aws-java-sdk-ec2" % AwsSdkVersion
     ),
     test in Test <<= (test in Test).dependsOn(DynamoDBLocal.Keys.startDynamoDBLocal),
     testOnly in Test <<= (testOnly in Test).dependsOn(DynamoDBLocal.Keys.startDynamoDBLocal),
