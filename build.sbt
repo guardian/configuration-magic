@@ -7,7 +7,8 @@ organization := "com.gu"
 name := "configuration-magic"
 
 lazy val sharedSettings = Seq(
-  scalaVersion := "2.11.7",
+  scalaVersion := "2.12.3",
+  crossScalaVersions := Seq("2.11.11", "2.12.3"),
   organization := "com.gu",
   pomExtra in Global := {
     <url>https://github.com/guardian/configuration-magic</url>
@@ -41,7 +42,7 @@ lazy val core = project
     name := "configuration-magic-core",
     libraryDependencies ++= Seq(
       "com.typesafe" % "config" % "1.3.0",
-      "org.specs2" %% "specs2-core" % "3.7" % "test",
+      "org.specs2" %% "specs2-core" % "3.9.5" % "test",
       "com.amazonaws" % "aws-java-sdk-dynamodb" % AwsSdkVersion,
       "com.amazonaws" % "aws-java-sdk-ec2" % AwsSdkVersion
     ),
@@ -56,7 +57,7 @@ lazy val play24 = project
   .settings(
     name := "configuration-magic-play2.4",
     libraryDependencies ++= Seq(
-    "com.typesafe.play" %% "play" % "2.4.6"
+    "com.typesafe.play" %% "play" % "2.6.6"
   ))
 
 releaseProcess := Seq[ReleaseStep](
