@@ -51,11 +51,11 @@ lazy val core = project
     testQuick in Test <<= (testQuick in Test).dependsOn(DynamoDBLocal.Keys.startDynamoDBLocal)
   )
 
-lazy val play24 = project
+lazy val play26 = project
   .dependsOn(core)
   .settings(sharedSettings:_*)
   .settings(
-    name := "configuration-magic-play2.4",
+    name := "configuration-magic-play2.6",
     libraryDependencies ++= Seq(
     "com.typesafe.play" %% "play" % "2.6.6",
     "com.typesafe.play" %% "play-guice" % "2.6.6"
