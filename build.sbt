@@ -57,7 +57,8 @@ lazy val play24 = project
   .settings(
     name := "configuration-magic-play2.4",
     libraryDependencies ++= Seq(
-    "com.typesafe.play" %% "play" % "2.6.6"
+    "com.typesafe.play" %% "play" % "2.6.6",
+    "com.typesafe.play" %% "play-guice" % "2.6.6"
   ))
 
 releaseProcess := Seq[ReleaseStep](
