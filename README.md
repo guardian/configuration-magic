@@ -92,7 +92,7 @@ Thus your EC2 instance profile will need the following permissions:
 }
 ```
 
-## configuration-magic-play2-4
+## configuration-magic-play2-6
 
 This module aim to simplify the usage of configuration magic for play 2.6 and above.
 It has been tested with play 2.6
