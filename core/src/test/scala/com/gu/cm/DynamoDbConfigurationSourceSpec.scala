@@ -1,8 +1,8 @@
 package com.gu.cm
 
-import com.amazonaws.auth.DefaultAWSCredentialsProviderChain
+import com.amazonaws.auth.{AWSCredentials, AWSCredentialsProvider, DefaultAWSCredentialsProviderChain}
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
-import com.amazonaws.services.dynamodbv2.document.{Item, DynamoDB}
+import com.amazonaws.services.dynamodbv2.document.{DynamoDB, Item}
 import com.amazonaws.services.dynamodbv2.model._
 import com.typesafe.config.ConfigFactory
 import org.specs2.mutable.Specification
@@ -20,8 +20,16 @@ class DynamoDbConfigurationSourceSpec extends Specification {
   }
 
   trait DynamoDbScope extends Scope {
+    val emptyCredentials = new AWSCredentialsProvider {
+      override def refresh(): Unit = ()
+      override def getCredentials: AWSCredentials = new AWSCredentials {
+        override def getAWSAccessKeyId: String = ""
+        override def getAWSSecretKey: String = ""
+      }
+    }
+
     val dynamoDb = {
-      val client = new AmazonDynamoDBClient(new DefaultAWSCredentialsProviderChain())
+      val client = new AmazonDynamoDBClient(emptyCredentials)
       client.setEndpoint("http://localhost:8000")
       new DynamoDB(client)
     }
