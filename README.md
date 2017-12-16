@@ -92,6 +92,23 @@ Thus your EC2 instance profile will need the following permissions:
 }
 ```
 
+#### For AWS Systems Manager Parameters
+
+**Note**: Requires `kms:Decrypt` permissions on a KMS key (`ConfigKmsKeyId`):
+
+```
+{
+    "Effect": "Allow",
+    "Action": "ssm:GetParametersByPath",
+    "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${ProjectName}/${EnvironmentName}
+    "Resource": { "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${Stack}/${Stage}/${App}" }
+}, {
+    "Effect": "Allow",
+    "Action": "kms:Decrypt",
+    Resource: { "Fn::Sub": "arn:aws:kms:${AWS::Region}:*:key/${ConfigKmsKeyId}" }
+}
+```
+
 ## configuration-magic-play2-6
 
 This module aim to simplify the usage of configuration magic for play 2.6 and above.

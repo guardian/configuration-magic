@@ -44,7 +44,8 @@ lazy val core = project
       "com.typesafe" % "config" % "1.3.0",
       "org.specs2" %% "specs2-core" % "3.9.5" % "test",
       "com.amazonaws" % "aws-java-sdk-dynamodb" % AwsSdkVersion,
-      "com.amazonaws" % "aws-java-sdk-ec2" % AwsSdkVersion
+      "com.amazonaws" % "aws-java-sdk-ec2" % AwsSdkVersion,
+      "com.amazonaws" % "aws-java-sdk-ssm" % "1.11.249"
     ),
     test in Test <<= (test in Test).dependsOn(DynamoDBLocal.Keys.startDynamoDBLocal),
     testOnly in Test <<= (testOnly in Test).dependsOn(DynamoDBLocal.Keys.startDynamoDBLocal),
