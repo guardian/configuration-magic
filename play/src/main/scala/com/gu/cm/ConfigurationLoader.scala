@@ -2,7 +2,7 @@ package com.gu.cm
 
 import play.api.{Configuration => PlayConfiguration}
 import play.api.ApplicationLoader.Context
-import play.api.Mode.{Mode => PlayMode}
+import play.api.{Mode => PlayMode}
 import PlayImplicits._
 
 object ConfigurationLoader {
