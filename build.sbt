@@ -6,6 +6,9 @@ organization := "com.gu"
 
 name := "configuration-magic"
 
+val crossSettings = Seq(
+  crossScalaVersions := Seq("2.11.12", "2.12.16")
+)
 
 lazy val sharedSettings = Seq(
   scalaVersion := "2.12.16",
@@ -39,6 +42,7 @@ val AwsSdkVersion = "1.11.35"
 lazy val core = (project in file("core"))
   .settings(LocalDynamoDb.settings)
   .settings(sharedSettings:_*)
+  .settings(crossSettings)
   .settings(
     name := "configuration-magic-core",
     libraryDependencies ++= Seq(
@@ -55,6 +59,7 @@ lazy val core = (project in file("core"))
 lazy val play27 = (project in file("play"))
   .dependsOn(core)
   .settings(sharedSettings:_*)
+  .settings(crossSettings)
   .settings(
     name := "configuration-magic-play2.7",
     target := file("target/play2.7"),
@@ -81,6 +86,7 @@ lazy val root = (project in file("."))
     publishArtifact := false,
     skip in publish := true
   )
+
 
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
