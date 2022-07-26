@@ -63,8 +63,19 @@ lazy val play27 = (project in file("play"))
     "com.typesafe.play" %% "play-guice" % "2.7.9"
   ))
 
+lazy val play28 = (project in file("play"))
+  .dependsOn(core)
+  .settings(sharedSettings:_*)
+  .settings(
+    name := "configuration-magic-play2.8",
+    target := file("target/play2.8"),
+    libraryDependencies ++= Seq(
+    "com.typesafe.play" %% "play" % "2.8.16",
+    "com.typesafe.play" %% "play-guice" % "2.8.16"
+  ))
+
 lazy val root = (project in file("."))
-  .aggregate(core, play27)
+  .aggregate(core, play27, play28)
   .settings(sharedSettings)
   .settings(
     publishArtifact := false,
