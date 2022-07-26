@@ -56,6 +56,18 @@ lazy val core = (project in file("core"))
     testQuick in Test <<= (testQuick in Test).dependsOn(DynamoDBLocal.Keys.startDynamoDBLocal)
   )
 
+lazy val play26 = (project in file("play"))
+  .dependsOn(core)
+  .settings(sharedSettings:_*)
+  .settings(crossSettings)
+  .settings(
+    name := "configuration-magic-play2.6",
+    target := file("target/play2.6"),
+    libraryDependencies ++= Seq(
+    "com.typesafe.play" %% "play" % "2.6.25",
+    "com.typesafe.play" %% "play-guice" % "2.6.25"
+  ))
+
 lazy val play27 = (project in file("play"))
   .dependsOn(core)
   .settings(sharedSettings:_*)
@@ -80,7 +92,7 @@ lazy val play28 = (project in file("play"))
   ))
 
 lazy val root = (project in file("."))
-  .aggregate(core, play27, play28)
+  .aggregate(core, play26, play27, play28)
   .settings(sharedSettings)
   .settings(
     publishArtifact := false,
