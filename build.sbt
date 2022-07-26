@@ -64,7 +64,7 @@ lazy val play27 = (project in file("play"))
   ))
 
 lazy val root = (project in file("."))
-  .aggregate(core, play27, play28)
+  .aggregate(core, play27)
   .settings(sharedSettings)
   .settings(
     publishArtifact := false,
