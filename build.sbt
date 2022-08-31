@@ -6,10 +6,14 @@ organization := "com.gu"
 
 name := "configuration-magic"
 
+val crossSettings = Seq(
+  crossScalaVersions := Seq("2.11.12", "2.12.16")
+)
+
 lazy val sharedSettings = Seq(
-  scalaVersion := "2.12.3",
-  crossScalaVersions := Seq("2.11.11", "2.12.3"),
+  scalaVersion := "2.12.16",
   organization := "com.gu",
+  scalacOptions ++= Seq("-feature", "-deprecation"),
   pomExtra in Global := {
     <url>https://github.com/guardian/configuration-magic</url>
     <licenses>
@@ -35,9 +39,10 @@ lazy val sharedSettings = Seq(
 
 val AwsSdkVersion = "1.11.35"
 
-lazy val core = project
+lazy val core = (project in file("core"))
   .settings(LocalDynamoDb.settings)
   .settings(sharedSettings:_*)
+  .settings(crossSettings)
   .settings(
     name := "configuration-magic-core",
     libraryDependencies ++= Seq(
@@ -51,15 +56,49 @@ lazy val core = project
     testQuick in Test <<= (testQuick in Test).dependsOn(DynamoDBLocal.Keys.startDynamoDBLocal)
   )
 
-lazy val play26 = project
+lazy val play26 = (project in file("play"))
+  .dependsOn(core)
+  .settings(sharedSettings:_*)
+  .settings(crossSettings)
+  .settings(
+    name := "configuration-magic-play2.6",
+    target := file("target/play2.6"),
+    libraryDependencies ++= Seq(
+    "com.typesafe.play" %% "play" % "2.6.25",
+    "com.typesafe.play" %% "play-guice" % "2.6.25"
+  ))
+
+lazy val play27 = (project in file("play"))
+  .dependsOn(core)
+  .settings(sharedSettings:_*)
+  .settings(crossSettings)
+  .settings(
+    name := "configuration-magic-play2.7",
+    target := file("target/play2.7"),
+    libraryDependencies ++= Seq(
+    "com.typesafe.play" %% "play" % "2.7.9",
+    "com.typesafe.play" %% "play-guice" % "2.7.9"
+  ))
+
+lazy val play28 = (project in file("play"))
   .dependsOn(core)
   .settings(sharedSettings:_*)
   .settings(
-    name := "configuration-magic-play2.6",
+    name := "configuration-magic-play2.8",
+    target := file("target/play2.8"),
     libraryDependencies ++= Seq(
-    "com.typesafe.play" %% "play" % "2.6.6",
-    "com.typesafe.play" %% "play-guice" % "2.6.6"
+    "com.typesafe.play" %% "play" % "2.8.16",
+    "com.typesafe.play" %% "play-guice" % "2.8.16"
   ))
+
+lazy val root = (project in file("."))
+  .aggregate(core, play26, play27, play28)
+  .settings(sharedSettings)
+  .settings(
+    publishArtifact := false,
+    skip in publish := true
+  )
+
 
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
